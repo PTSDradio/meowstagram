@@ -1,8 +1,8 @@
-"""updates datetimes to work
+"""modifies like relationship layout
 
-Revision ID: a2f15c960931
+Revision ID: f86a2502f97d
 Revises: 
-Create Date: 2023-09-06 16:11:50.053165
+Create Date: 2023-09-12 11:11:08.626486
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a2f15c960931'
+revision = 'f86a2502f97d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,12 +31,18 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('followers',
+    sa.Column('follower_id', sa.Integer(), nullable=True),
+    sa.Column('followed_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['followed_id'], ['users.id'], name=op.f('fk_followers_followed_id_users')),
+    sa.ForeignKeyConstraint(['follower_id'], ['users.id'], name=op.f('fk_followers_follower_id_users'))
+    )
     op.create_table('posts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('image', sa.String(), nullable=True),
     sa.Column('subtext', sa.String(length=255), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_posts_user_id_users')),
     sa.PrimaryKeyConstraint('id')
     )
@@ -67,5 +73,6 @@ def downgrade():
     op.drop_table('likes')
     op.drop_table('comments')
     op.drop_table('posts')
+    op.drop_table('followers')
     op.drop_table('users')
     # ### end Alembic commands ###
