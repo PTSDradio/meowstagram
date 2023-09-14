@@ -135,7 +135,7 @@ class Like(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-    serialize_rules = ('-post.likes', '-user.likes')
+    
 
 
 class Comment(db.Model, SerializerMixin):

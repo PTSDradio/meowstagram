@@ -2,6 +2,7 @@ from models import db, User, Post, Comment, Like, followers
 from flask_restful import Api, Resource
 from flask import Flask, make_response, request
 from flask_migrate import Migrate
+from flask_cors import CORS as FLaskCors
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import os
 
@@ -14,6 +15,8 @@ DATABASE = os.environ.get(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+cors = FLaskCors(app)
 
 migrate = Migrate(app, db)
 db.init_app(app)
@@ -28,7 +31,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class Login(Resource):
-    def get(self):
+    def post(self):
         
                 data = request.get_json()
                 username=data["username"]
@@ -38,7 +41,8 @@ class Login(Resource):
                     password_bool = user.verify_password(password)
                     if password_bool:
                         login_user(user)
-                        return make_response("", 204)
+                        print(user.to_dict())
+                        return make_response(user.to_dict(), 200)
                     else:
                          return make_response({"error": "Password is incorrect"}, 404)
                 else:
@@ -58,14 +62,13 @@ class Account(Resource):
                             password=data["password"],
                             first_name=data["first_name"],
                             last_name=data["last_name"],
-                            bio=data["bio"]
                             )
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
             return make_response(new_user.to_dict(), 201)
-        except ValueError as e:
-            return make_response({'error': str(e),}, 400)
+        except:
+            return make_response({'error': 'username already exists'}, 409)
         
     @login_required
     def patch(self):
@@ -89,6 +92,12 @@ class Account(Resource):
         logout_user()
         return make_response("",204)
 
+class AccountById(Resource):
+    @login_required
+    def get(self, id):
+        user = User.query.filter(User.id == id).first()
+        if user:
+            return make_response(user.to_dict(),200)
 class Users(Resource):
      def get(self):
           users = [user.to_dict() for user in User.query.all()]
@@ -164,6 +173,7 @@ class Feed(Resource):
         return make_response(posts, 200)
 
 class Likes(Resource):
+    @login_required
     def post(self):
         data= request.get_json()
         post_id = data["post_id"]
@@ -176,6 +186,7 @@ class Likes(Resource):
                 return make_response("already liked", 404)
         else:
            return make_response({"error": "No post found"}, 404)
+
         
     def delete(self):
         data= request.get_json()
