@@ -2,7 +2,7 @@ from models import db, User, Post, Comment, Like, followers
 from flask_restful import Api, Resource
 from flask import Flask, make_response, request
 from flask_migrate import Migrate
-from flask_cors import CORS as FLaskCors
+from flask_cors import CORS as FlaskCors
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import os
 
@@ -15,8 +15,11 @@ DATABASE = os.environ.get(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['REMEMBER_COOKIE_DOMAIN']= "http://localhost:3000/"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
 
-cors = FLaskCors(app)
+cors = FlaskCors(app, origins=["http://localhost:3000"], supports_credentials=True)
 
 migrate = Migrate(app, db)
 db.init_app(app)
@@ -40,7 +43,7 @@ class Login(Resource):
                 if user:
                     password_bool = user.verify_password(password)
                     if password_bool:
-                        login_user(user)
+                        login_user(user, remember=True)
                         print(user.to_dict())
                         return make_response(user.to_dict(), 200)
                     else:
@@ -93,11 +96,13 @@ class Account(Resource):
         return make_response("",204)
 
 class AccountById(Resource):
-    @login_required
     def get(self, id):
         user = User.query.filter(User.id == id).first()
         if user:
             return make_response(user.to_dict(),200)
+        else:
+            return make_response("No such user", 404)
+
 class Users(Resource):
      def get(self):
           users = [user.to_dict() for user in User.query.all()]
@@ -165,10 +170,18 @@ class Posting(Resource):
             return make_response("", 204)
         return make_response("error", 404)
         
+class PostById(Resource):
+    def get(self, id):
+        post = Post.query.filter_by(id=id).first()
+        if post:
+            return make_response(post.to_dict(), 200)
+        else:
+            return make_response({"error":"post not found"}, 404)
+
 class Feed(Resource):
     @login_required
     def get(self):
-        posts = [post.to_dict() for post in current_user.followed_posts()]
+        posts = [post.to_dict() for post in current_user.followed_posts().all()]
         
         return make_response(posts, 200)
 
@@ -181,13 +194,13 @@ class Likes(Resource):
         if post:
             result = post.like(current_user)
             if result is True:
-                return make_response(post.to_dict(), 200)
+                return make_response({"success":"liked"}, 200)
             elif result is False:
-                return make_response("already liked", 404)
+                return make_response({"error":"already liked"}, 404)
         else:
            return make_response({"error": "No post found"}, 404)
 
-        
+    @login_required
     def delete(self):
         data= request.get_json()
         post_id = data["post_id"]
@@ -195,13 +208,14 @@ class Likes(Resource):
         if post:
             result = post.unlike(current_user)
             if result is True:
-                return make_response("", 204)
+                return make_response({"success":"like deleted"}, 200)
             elif result is False:
                 return make_response({"error": "hasnt been liked yet ya doof"}, 404)
         else:
            return make_response({"error": "No post found"}, 404)
 
 class Comments(Resource):
+    @login_required
     def post(self):
         data = request.get_json()
         post_id = data["post_id"]
@@ -235,9 +249,23 @@ class Comments(Resource):
         else:
            return make_response({"error": "No comment found"}, 404)        
 
-          
+class CommentsByPostId(Resource):
+    def get(self, id):
+        comments = [comment.to_dict() for comment in Comment.query.filter_by(post_id=id).all()]
+        if comments:
+            return make_response(comments, 200)
+        else:
+            return make_response({"error":"post not found"}, 404)
+
+class CurrentUser(Resource):
+    @login_required
+    def get(self):
+        return make_response(current_user.to_dict(), 200)
+
+
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
+api.add_resource(CurrentUser, '/currentUser')
 
 api.add_resource(Account, '/account')
 api.add_resource(Users, '/users')
@@ -246,8 +274,11 @@ api.add_resource(Follow, '/follow')
 api.add_resource(Feed, '/feed')
 
 api.add_resource(Posting, '/post')
+api.add_resource(PostById, '/post/<int:id>')
 api.add_resource(Likes, '/like')
 api.add_resource(Comments, '/comments')
+api.add_resource(AccountById, '/account/<int:id>')
+api.add_resource(CommentsByPostId, '/comments/<int:id>')
 
 
 

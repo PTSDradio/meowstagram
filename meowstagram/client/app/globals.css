@@ -1,6 +1,6 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
 /* :root {
   --foreground-rgb: 0, 0, 0;
@@ -26,3 +26,20 @@ body {
     rgb(var(--background-start-rgb));
 }
  */
+
+/* .account-header {
+  display:flex;
+  flex: wrap;
+  justify-content: align-items;
+}
+
+.account-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+} */

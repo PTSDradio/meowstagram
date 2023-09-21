@@ -1,10 +1,13 @@
 'use client'
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useContext} from 'react';
+import { userContext } from '../context/UserProvider.js';
 import {useFormik} from "formik";
 import * as yup from "yup"
+import { useRouter } from 'next/navigation';
 
 const login = () =>{
     let [user, setUser] = useState({})
+    const router = useRouter()
 
     const formSchema = yup.object().shape({
         username: yup.string().required("Must enter a username"),
@@ -19,7 +22,8 @@ const login = () =>{
         validationSchema: formSchema, 
         onSubmit: (values) => {
           fetch('http://127.0.0.1:5555/login', {
-            method: 'POST', 
+            method: 'POST',
+            credentials: "include", 
             headers: {
               "Content-Type": "application/json",
             },
@@ -27,9 +31,9 @@ const login = () =>{
           })
           .then((res) => res.json())
           .then((res) => {
-            setUser(res)
-    
-              console.log(res)
+            // setUser(res)
+            router.push('/')
+            console.log(res)
           })
           // .then((data) => console.log(data))
   

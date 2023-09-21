@@ -1,4 +1,7 @@
 import './globals.css'
+// import styles from '../sidebar.css'
+import Link from 'next/link';
+import UserProvider from './context/UserProvider'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -10,8 +13,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
+    <UserProvider>
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <h1>Meowstagram</h1>
+        <div className="navbar">
+          <Link href="/">Home</Link>
+          <br/>
+          <Link href="/search">search</Link>
+          <br/>
+          <Link href="/account">account</Link>
+        </div>
+        {children}
+        </body>
     </html>
+    </UserProvider>
   )
 }

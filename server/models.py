@@ -47,9 +47,14 @@ class User(db.Model, SerializerMixin, UserMixin):
                                 lazy='dynamic',  
                                 back_populates="following")
     
-    serialize_rules = ('-posts.user', '-posts.likes', '-following.likes', 
-                       '-follower.likes', '-following.following', '-following.followers', 
-                       '-followers.following', '-followers.followers', '-comments.post', '-comments.user')
+    serialize_rules = ('-following.bio', '-following.followers',
+                        '-following.comments', '-following.created_at', '-following.updated_at',
+                         '-following.first_name', '-following.last_name', '-following.likes',
+                           '-following.password_hash', '-following.posts', '-following.following', '-followers.bio', '-followers.followers',
+                        '-followers.comments', '-followers.created_at', '-followers.updated_at',
+                         '-followers.first_name', '-followers.last_name', '-followers.likes',
+                           '-followers.password_hash', '-followers.posts', '-followers.following',
+                           '-comments', '-likes.comments', '-likes')
 
     #dont want password accessible
     @property
@@ -101,13 +106,16 @@ class Post(db.Model, SerializerMixin):
     likes = db.relationship("User", secondary="likes", back_populates="likes")
     comments = db.relationship("Comment", cascade="all, delete-orphan",  back_populates="post")
 
-    serialize_rules = ('-comments.post', '-comments.user', '-user.bio', '-user.followers',
+    serialize_rules = ('-comments.post', '-user.bio', '-user.followers',
                         '-user.comments', '-user.created_at', '-user.updated_at',
                          '-user.first_name', '-user.last_name', '-user.id', '-user.likes',
                            '-user.password_hash', '-user.posts', '-user.following', '-likes.bio', '-likes.followers',
                         '-likes.comments', '-likes.created_at', '-likes.updated_at',
                          '-likes.first_name', '-likes.last_name', '-likes.id', '-likes.likes',
-                           '-likes.password_hash', '-likes.posts', '-likes.following')
+                           '-likes.password_hash', '-likes.posts', '-likes.following''-user.followers',
+                        '-user.comments', '-user.created_at', '-user.updated_at',
+                         '-user.first_name', '-user.last_name', '-user.id', '-user.likes',
+                           '-user.password_hash', '-user.posts', '-user.following',)
 
     def like(self, user):
         if not self.already_liked(user):
@@ -135,8 +143,6 @@ class Like(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
-    
-
 
 class Comment(db.Model, SerializerMixin):
     __tablename__="comments"
@@ -150,7 +156,10 @@ class Comment(db.Model, SerializerMixin):
     post = db.relationship("Post", back_populates="comments")
     user = db.relationship("User",  back_populates="comments")
 
-    serialize_rules = ('-post.comments', '-user.comments',)
+    serialize_rules = ('-post', '-user.comments', '-user.followers',
+                        '-user.comments', '-user.created_at', '-user.updated_at',
+                         '-user.first_name', '-user.last_name', '-user.id', '-user.likes',
+                           '-user.password_hash', '-user.posts', '-user.following', '-user.bio')
 
     def create(self, user, post):
         self.post.append(post)
