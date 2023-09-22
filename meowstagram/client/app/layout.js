@@ -2,6 +2,7 @@ import './globals.css'
 // import styles from '../sidebar.css'
 import Link from 'next/link';
 import UserProvider from './context/UserProvider'
+import Navbar from '../components/Navbar'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -16,14 +17,7 @@ export default function RootLayout({ children }) {
     <UserProvider>
     <html lang="en">
       <body className={inter.className}>
-        <h1>Meowstagram</h1>
-        <div className="navbar">
-          <Link href="/">Home</Link>
-          <br/>
-          <Link href="/search">search</Link>
-          <br/>
-          <Link href="/account">account</Link>
-        </div>
+        <Navbar/>
         {children}
         </body>
     </html>

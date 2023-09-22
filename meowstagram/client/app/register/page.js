@@ -59,6 +59,7 @@ const page_name = () =>{
                         onChange={formik.handleChange}
                     />
                 </label>
+                <p style={{ color: "red" }}> {formik.errors.first_name}</p>
                 <br/>
                 <label>
                     Last Name:
@@ -70,6 +71,7 @@ const page_name = () =>{
                         onChange={formik.handleChange}
                     />
                 </label>
+                <p style={{ color: "red" }}> {formik.errors.last_name}</p>
                 <br/>
                 <label>
                     Username
@@ -81,6 +83,7 @@ const page_name = () =>{
                         onChange={formik.handleChange}
                     />
                 </label>
+                <p style={{ color: "red" }}> {formik.errors.username}</p>
                 <br/>
                 <label>
                     Password
@@ -92,6 +95,7 @@ const page_name = () =>{
                         onChange={formik.handleChange}
                     />
                 </label>
+                <p style={{ color: "red" }}> {formik.errors.password}</p>
                 <br/>
                 <button type="submit">Login</button>
             </form>

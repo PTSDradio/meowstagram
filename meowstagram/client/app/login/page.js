@@ -58,6 +58,7 @@ const login = () =>{
                         placeholder="Enter your username"
                         onChange={formik.handleChange}
                     />
+                    <p style={{ color: "red" }}> {formik.errors.username}</p>
                 </label>
                 <br/>
                 <label>
@@ -69,6 +70,7 @@ const login = () =>{
                         placeholder="Enter your password"
                         onChange={formik.handleChange}
                     />
+                    <p style={{ color: "red" }}> {formik.errors.password}</p>
                 </label>
                 <br/>
                 <button type="submit">Login</button>

@@ -27,7 +27,7 @@ body {
 }
  */
 
-/* .account-header {
+.account-header {
   display:flex;
   flex: wrap;
   justify-content: align-items;
@@ -42,4 +42,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: center;
-} */
+}
+body {
+  background-color: grey;
+}

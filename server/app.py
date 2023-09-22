@@ -137,7 +137,7 @@ class Follow(Resource):
                  return make_response({f"error": "cannot find user to unfollow"}, 404)
 
 class SearchUser(Resource):
-    def get(self):
+    def post(self):
         data = request.get_json()
         search_query = data['username']
         results = [user.to_dict(only=('id', 'username','profile_picture')) 
