@@ -1,9 +1,12 @@
 'use client'
 
 import React, {useEffect, useState, useContext} from 'react';
-import { userContext } from '../context/UserProvider.js';
+import { userContext } from '../providers/UserProvider.js';
 import {useParams} from 'next/navigation';
 import { useRouter } from 'next/navigation'
+import Image from "next/image";
+import { Input } from '@nextui-org/react';
+
 
 
 const search= () =>{
@@ -46,11 +49,11 @@ const search= () =>{
 
     let users = results.map((u)=> {
         return (
-            <div>
-                <image src={u["profile_picture"]}/>
+            <div key={u.id}>
                 <h3 onClick={(e) => {
                     e.preventDefault();
                     handleAccount(u["id"])}}>{u["username"]}</h3>
+                <p>{u.first_name+" "+u.last_name}</p>
             </div>
         )
     }) 
@@ -59,7 +62,7 @@ const search= () =>{
     
     return (
         <div>
-            <input
+            <Input
                 id="search"
                 type="text"
                 // value= {formik.values.username}

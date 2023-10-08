@@ -55,7 +55,7 @@ class Logout(Resource):
     @login_required
     def post(self):
           logout_user()
-          return make_response("",204)
+          return make_response({"success":"logged out"},200)
      
 class Account(Resource):
     def post(self):
@@ -80,6 +80,10 @@ class Account(Resource):
             first_name = data['first_name']
             last_name = data['last_name']
             bio = data['bio']
+            username = data['username']
+            profile_picture = data['profile_picture']
+            current_user.username = username
+            current_user.profile_picture = profile_picture
             current_user.first_name = first_name
             current_user.last_name = last_name
             current_user.bio = bio
@@ -140,7 +144,7 @@ class SearchUser(Resource):
     def post(self):
         data = request.get_json()
         search_query = data['username']
-        results = [user.to_dict(only=('id', 'username','profile_picture')) 
+        results = [user.to_dict(only=('id', 'username', 'first_name', 'last_name')) 
                    for user in User.query.filter(User.username.contains(search_query)).all()]
         return make_response(results, 200)
 
@@ -245,7 +249,7 @@ class Comments(Resource):
         if comment:
             db.session.delete(comment)
             db.session.commit()
-            return make_response("", 204)
+            return make_response({"success":"comment deleted"}, 200)
         else:
            return make_response({"error": "No comment found"}, 404)        
 

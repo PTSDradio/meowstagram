@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, useContext} from "react";
-import { userContext } from "../app/context/UserProvider";
+import { userContext } from "../app/providers/UserProvider";
 import { useRouter } from 'next/navigation'
 import RenderComment from "./Comments"
 import PostDisplay from "./PostDisplay";
@@ -10,7 +10,9 @@ const Feed = () => {
     let user = useContext(userContext)
     let [feed, setFeed] = useState([{
          "user": [],
-         "comments":[]
+         "comments":[],
+         "id":0,
+         "likes":[]
          
 }])
 
@@ -37,7 +39,7 @@ const Feed = () => {
     }, [])
 
     let posts = feed.map((post)=> (
-        <PostDisplay props={post} key={post["id"]}/>
+        <PostDisplay props={{...post, ...post["user"]}} key={post["id"]}/>
     ))
     // console.log(posts)
 

@@ -1,8 +1,8 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities; 
 
-/* :root {
+:root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -25,12 +25,55 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
- */
 
-.account-header {
+.post {
+  width: 50rem;
+  display:flex;
+  flex: wrap;
+  flex-direction: column;
+  /* justify-content: flex-start; */
+  align-items: flex-start;
+  gap:15px;
+  border-bottom: 1px solid rgb(38, 38, 38);
+  margin-bottom: 12px;
+}
+
+.post-content {
+  width: 50rem;
+  box-sizing: border-box;
+  border: 1px solid rgb(38, 38, 38);
+}
+
+.post-header {
   display:flex;
   flex: wrap;
   justify-content: align-items;
+  gap:10px;
+  align-items: center;
+}
+.post-footer {
+  display:flex;
+  flex: wrap;
+  justify-content: align-items;
+  flex-direction: column;
+  align-items: flex-start;
+  gap:10px;
+}
+/* .divider {
+  color: rgb(38, 38, 38)
+} */
+
+
+
+/* .account-header {
+  display:flex;
+  flex: wrap;
+  justify-content: align-items;
+}
+
+.account-header img {
+  width: 50px;
+  height: 50px;
 }
 
 .account-details {
@@ -46,3 +89,8 @@ body {
 body {
   background-color: grey;
 }
+
+.comment-container img {
+  width: 50px;
+  height: 50px;
+} */

@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useState, useContext} from 'react';
-import { userContext } from '../../context/UserProvider.js';
+import { userContext } from '../../providers/UserProvider.js';
 import {useParams} from 'next/navigation';
 import PostDisplay from '../../../components/PostDisplay.js';
 import comment from '../../../components/Comments.js';

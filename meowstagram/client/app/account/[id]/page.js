@@ -1,7 +1,7 @@
 "use client"
 import React, {useState, useEffect, useContext} from 'react';
 import AccountPost from '../../../components/AccountPosts.js'
-import { userContext } from '../../context/UserProvider.js';
+import { userContext } from '../../providers/UserProvider.js';
 import {useParams} from 'next/navigation';
 
 const account = () =>{

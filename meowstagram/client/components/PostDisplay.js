@@ -1,17 +1,19 @@
 
 import React, {useState, useEffect, useContext} from "react";
-import { userContext } from "../app/context/UserProvider";
+import { userContext } from "../app/providers/UserProvider";
 import { useRouter } from 'next/navigation'
+import {Divider, Avatar, AvatarGroup, AvatarIcon, Textarea, Image} from "@nextui-org/react";
 import RenderComment from "./Comments"
 
 
 const PostDisplay = ({props}) => {
-    console.log(props)
+    // console.log(props)
     const router = useRouter()
 
     let [isLiked, setIsLiked] = useState(false)
     let [btn, setBtn] = useState("Like")
     let [comment, setComment] = useState()
+    // let [allComments, setAllComments] = useState(props.comments)
     
     let user = useContext(userContext)
 
@@ -22,10 +24,8 @@ const PostDisplay = ({props}) => {
     let likes = props['likes']
     let profile_picture = props['profile_picture']
     let image = props["image"]
-    let comments = props['comments']
     let subtext = props['subtext']
 
-    console.log(user)
     useEffect(()=>{
         let toggleLiked = async (likes) => {
             // let user = await useContext(userContext)
@@ -34,11 +34,12 @@ const PostDisplay = ({props}) => {
                 setIsLiked(true)
                 setBtn("Dislike")
             }
-            console.log(user["username"])
         }
         toggleLiked(likes)
+
     
     }, [user])
+
 
     const handleLike = (post_id) => {
         fetch('http://127.0.0.1:5555/like', {
@@ -104,18 +105,20 @@ const PostDisplay = ({props}) => {
           })
           .then((res) => res.json())
           .then((res) => {
-            // console.log(res.status)
-
-            // // if (!res.ok) {
-            // //     throw new Error("Network response was not ok");
-            // //   }
-            // setIsLiked(false)
-            // setBtn("Like")
+            
+            // setAllComments([
+            //     ...allComments, 
+            //     {
+            //         "comment": comment,
+            //         "username": username,
+            //         "user_id": user_id
+            //     }
+            // ])
           })
 
     }
      
-    let renderedComments = comments.map((com)=> (
+    let renderedComments = props.comments.map((com)=> (
         <RenderComment comment={{...com, ...com['user']}} key={com.id}/>
     ))
 
@@ -125,35 +128,42 @@ const PostDisplay = ({props}) => {
     return (
         <div className="post">
             <header className="post-header">
-                <img src={profile_picture} alt="profile_picture"/>
+            <Avatar src={profile_picture} size="lg" />
                 <h1 onClick={(e)=>handleAccount(user_id)}>{username}</h1>
             </header>
-            <img src={image} alt="image"/>
-            <div className="post-bottom">
-                <h3>{subtext}</h3>
+            <Image
+                src={image}
+                // width={400}
+                alt="NextUI hero Image with delay"
+                radius="sm"
+                shadow=""
+                className="post-content"/>
+            <div className="post-footer">
+
                 <button onClick={isLiked? 
                 (e) =>handleDislike({"post_id": post_id}) :
                 (e) =>handleLike({"post_id": post_id})
                 }>{btn}</button>
+                <h3>{subtext}</h3>
                 {renderedComments}
                 <form onSubmit={(e)=> {
                     postComment(comment)
 
                     }}>
                     <label>Add a Comment:
-                        <input
-                            type="text"
+                        <Textarea
                             id="comment"
                             placeholder="Type your comment..."
                             onChange={(e)=> {
                                 e.preventDefault()
                                 setComment(e.target.value)}}
+                                className="max-w-xs"
                         />
                     </label>
                     <button type="submit">post comment</button>
                 </form>
             </div>
-
+            {/* <Divider className="divider" /> */}
         </div>
     )
 
